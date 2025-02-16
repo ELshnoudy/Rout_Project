@@ -1,0 +1,262 @@
+#include<iostream>
+#include<string>
+#include<cctype>
+using namespace std;
+class validation
+{
+    public:
+        bool static validateName(string name)
+        {
+            if(name.length() > 4 && name.length() < 21)
+            {
+                for(char c : name)
+                {
+                    if(isalpha(c))
+                    {
+                        return true;
+                    }
+                    else{
+                        cout << "Name must contain only alphabets" << endl;
+                        break;
+                        return false;
+                    }
+                }
+            }
+            else
+                cout << "Name must be between 5 and 20 characters" << endl;
+                return false;
+            
+        }
+        bool static validatePassword(string password)
+        {
+            if(password.length() > 7 && password.length() < 21)
+            {
+                return true;
+            }
+            else{
+                cout << "password must be between 8 and 20 characters " << endl;
+                return false;
+            }
+        }
+        bool static validateBalanceClient(double balance)
+        {
+            if(balance >= 1500)
+            {
+                return true;
+            }
+            else{
+                cout << "Balance must be greater than or equal 1500" << endl;
+                return false;
+            }
+        }
+        bool static validateBalanceEmployee(double balance) // and admin
+        {
+            if(balance >= 5000)
+            {
+                return true;
+            }
+            else{
+                cout << "Balance must be greater than or equal 5000" << endl;
+                return false;
+            }
+        }
+};
+//=============================================================================================
+class person : public validation
+{
+    private:
+        string name,password;
+        int id;
+    public:
+        person();
+        person(string name, int id, string password){
+            this->setName(name);
+            this->setId(id);
+            this->setPassword(password);
+        };
+        void setName(string name)
+        {
+            if(validateName(name))
+            {
+                this->name = name;
+            }
+            else{
+             return;
+            }
+        }
+        void setId(int id)
+        {
+            this->id = id;
+        }
+        void setPassword(string password)
+        {
+            if(validatePassword(password))
+            {
+                this->password = password;
+            }
+            else{
+             return ;
+            }
+        }
+        string getName()
+        {
+            return name;
+        }
+        int getId()
+        {
+            return id;
+        }
+        string getPassword()
+        {
+            return password;
+        }
+        void display()
+        {
+            cout<<"Name : "<<name<<endl;
+            cout<<"Id : "<<id<<endl;
+            cout<<"Password : "<<password<<endl;
+        }
+};
+//===================================================================================================
+class client : public person
+{
+    private:
+        double balance;
+    public:
+        client();
+        client(string name, int id, string password, double balance) : person(name, id, password)
+        {
+            this->setBalance(balance);
+        };
+        void setBalance(double balance)
+        {
+            if(validation::validateBalanceClient(balance))
+            {
+                this->balance = balance;
+            }
+            else{
+                cout << "balance must be greater than or equal 1500" << endl;
+            }
+        }
+        double getBalance()
+        {
+            return balance;
+        }
+        void deposit(double amount)
+        {
+            if(amount > 0)
+            {
+                balance += amount;
+            }
+            else{
+                cout << "amount must be greater than 0" << endl;
+            }
+        }
+        void withdraw(double amount)
+        {
+            if(amount > 0 && amount < balance)
+            {
+                balance -= amount;
+            }
+            else{
+                cout << "amount must be greater than 0 and less than balance" << endl;
+            }
+        }
+        void transfer(double amount, client &other)
+        {
+            if(amount > 0 && amount < balance)
+            {
+                balance -= amount;
+                other.deposit(amount);
+            }
+            else{
+                cout << "amount must be greater than 0 and less than balance" << endl;
+            }
+        }
+        void checkBalance()
+        {
+            cout << "balance: " << balance << endl;
+        }
+        void display()
+        {
+            person::display();
+            cout << "balance : " << balance << endl;
+            cout << "=================================" << endl;
+        }
+};
+//===================================================================================================
+class employee: public person{
+    private:
+        double balance;
+    public:
+        employee();
+        employee(string name, int id, string password, double balance) : person(name, id, password)
+        {
+            this->setBalance(balance);
+        };
+        void setBalance(double balance)
+        {
+            if(validateBalanceEmployee(balance))
+            {
+                this->balance = balance;
+            }
+            else{
+                return ;
+            }
+        }
+        double getBalance()
+        {
+            return balance;
+        }
+        void display()
+        {
+            person::display();
+            cout << "balance is : " << balance << endl;
+        }
+};
+//======================================================================================================
+class admin: public employee{
+    private:
+        double balance;
+    public:
+        admin();
+        admin(string name, int id, string password, double balance) : employee(name, id, password, balance)
+        {
+            this->setBalance(balance);
+        };
+        
+        void setBalance(double balance)
+        {
+            if(validateBalanceEmployee(balance))
+            {
+                this->balance = balance;
+            }
+            else{
+            return ;
+            }
+        }
+        double getBalance()
+        {
+            return balance;
+        }
+        void display()
+        {
+            employee::display();
+            cout << "balance is : " << balance << endl;
+        }
+};
+//============================================================================================================
+int main()
+{
+    client c1("mahmoud", 1, "mahmoud111", 2000);
+    c1.display();
+    c1.deposit(500);
+    c1.display();
+    c1.withdraw(1000);
+    c1.display();
+    client c2("Ahmed", 2, "65432561451", 3000);
+    c2.display();
+    c1.transfer(500, c2);
+    c1.display();
+    c2.display();
+}
